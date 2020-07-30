@@ -23,9 +23,11 @@ group ::=
 	| '(?!' regex ')'
 
 set ::=
-    '[' setItems ']'
+    '[' ']'
+    | '[' setItems ']'
+	| '[^' ']'
 	| '[^' setItems ']'
-setItems ::= setItem setItems | ε
+setItems ::= setItem setItems
 setItem ::= setChar '-' setChar | setChar
 
 quantifier ::= quantifierH '?' | quantifierH

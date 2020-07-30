@@ -69,18 +69,20 @@ group ('(':xs) =
         go input = case regex input of
             (True,(')':rest)) -> (True,rest)
             (False,(')':rest)) -> (True,rest)
-            otherwise -> (False,('(':xs))
+            otherwise -> (False,input)
 group input = (False,input)
 
 set :: [Char] -> Match
-set ('[':'^':xs) =
-    case setItems xs of
-        (_,(']':rest)) -> (True,rest)
-        otherwise -> (False, ('[':'^':xs))
+set ('[':']':xs) = (True,xs)
+set ('[':'^':']':xs) = (True,xs)
 set ('[':xs) =
-    case setItems xs of
-        (_,(']':rest)) -> (True,rest)
-        otherwise -> (False, ('[':xs))
+    case xs of 
+        ('^':xss) -> go xss
+        otherwise -> go xs
+    where 
+        go input = case setItems input of
+            (_,(']':rest)) -> (True,rest)
+            otherwise -> (False,input)
 set input = (False,input)
 
 
@@ -90,7 +92,7 @@ setItems input =
         (True,r1) ->
             let (t,r2) = setItems r1 in
                 (True, if t then r2 else r1)
-        otherwise -> (True,input)
+        otherwise -> (False,input)
 
 setItem :: [Char] -> Match
 setItem input =
