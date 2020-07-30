@@ -1,9 +1,6 @@
 # ide specific
 .vscode
 
-# antlr specific
-.antlr
-
 # haskell specific
 dist
 dist-*

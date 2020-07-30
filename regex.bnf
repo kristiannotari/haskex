@@ -1,0 +1,46 @@
+regex ::= regexHL regexTS | regexHL
+
+regexHL ::= regexH quantifier | regexH | regexL
+regexH ::=
+    group
+    | set
+    | char
+    | '.'
+regexL ::= '^' | '$'
+regexTS ::= regexT regexTS | regexT
+regexT ::= regexHL | '|' regexHL
+
+group ::=
+    '(' ')'
+    '(' regex ')'
+    | '(?<' name '>' ')'
+    | '(?<' name '>' regex ')'
+	| '(?:' ')'
+	| '(?:' regex ')'
+	| '(?=' ')'
+	| '(?=' regex ')'
+	| '(?!' ')'
+	| '(?!' regex ')'
+
+set ::=
+    '[' setItems ']'
+	| '[^' setItems ']'
+setItems ::= setItem setItems | ε
+setItem ::= setChar '-' setChar | setChar
+
+quantifier ::= quantifierH '?' | quantifierH
+quantifierH ::=
+    '?'							
+	| '+'						
+	| '*'						
+	| '{' number ',' number '}'	
+	| '{' number ',' '}'
+	| '{' number '}'			
+
+name ::= letter [letter | digit]*
+setChar ::= <any char except [']']>
+char ::= <any char except those in metachar> | '\\' metachar
+metachar ::= '.' | '+' | '\\' | '(' | ')' | '[' | '^' | '$' | '|' | '?'
+number ::= [digit]+
+digit ::= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+letter ::= 'a' | 'b' | 'c' | ... | 'A' | 'B' | 'C' | ...
