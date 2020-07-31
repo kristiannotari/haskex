@@ -40,7 +40,7 @@ quantifierH ::=
 	| '{' number '}'			
 
 name ::= letter [letter | digit]*
-setChar ::= <any char except [']']>
+setChar ::= <any char except ']'>
 char ::= <any char except those in metachar> | '\\' <any char>
 metachar ::= '.' | '+' | '\\' | '(' | ')' | '[' | '^' | '$' | '|' | '?'
 number ::= [digit]+

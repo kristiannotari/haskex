@@ -11,11 +11,10 @@ match input =
 
 regex :: [Char] -> Match
 regex [] = (True,[])
-regex input =
-    case regexHL input of
-        (True,[]) -> (True,[])
-        (True,rest) -> regexTS rest
-        otherwise -> (False,input)
+regex input = firstMatch [
+        (\i -> regexHL i `thenMatch` regexTS),
+        regexHL
+    ] input
 
 regexHL :: [Char] -> Match
 regexHL input = firstMatch [
@@ -33,17 +32,15 @@ regexH input = firstMatch [
     ] input
 
 regexL :: [Char] -> Match
-regexL input = firstMatch [
-        matchChar '^',
-        matchChar '$'
-    ] input
+regexL ('^':xs) = (True,xs)
+regexL ('$':xs) = (True,xs)
+regexL input = (False,input)
 
 regexTS :: [Char] -> Match
-regexTS input =
-    case regexT input of
-        (True,[]) -> (True,[])
-        (True,rest) -> regexTS rest
-        otherwise -> (False,input)
+regexTS input = firstMatch [
+        (\i -> regexT i `thenMatch` regexTS),
+        regexT
+    ] input
 
 regexT :: [Char] -> Match
 regexT input = firstMatch [
@@ -106,12 +103,10 @@ setItem input =
 
 quantifier :: [Char] -> Match
 quantifier input =
-    case quantifierH input of
-        (True,rest) -> lazy rest
-        otherwise -> (False,input)
-    where
-        lazy [] = (True, [])
-        lazy (l:rest) = if l == '?' then (True, rest) else (True, (l:rest))
+    firstMatch [
+        (\i -> quantifierH i `thenMatch` matchChar '?'),
+        quantifierH
+    ] input
 
 quantifierH :: [Char] -> Match
 quantifierH ('?':xs) = (True,xs)
