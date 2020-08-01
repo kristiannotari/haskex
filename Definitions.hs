@@ -2,50 +2,31 @@ module Definitions where
 
 type Input = [Char]
 
-data QuantifierType
-  = ZeroOrMore
-  | OneOrMore
-  | ZeroOrOne
-  | FromTo Int Int
-  | From Int
-  | Exactly Int
-  deriving (Show)
-
-data SetItemType
-  = Range String String
-  | SetChar String
-  deriving (Show)
-
 data ParseNode
-  = Number Int
-  | Digit Char
-  | Letter Char
-  | Metachar Char
-  | Char Char
-  | EscapedChar Char
-  | KeyChar Char
-  | Name String
-  | Quantifier QuantifierType
-  | LazyQuantifier
-  | SetItem SetItemType
-  | SetItems
-  | Set
-  | Group
-  | Dot
-  | Start
-  | End
-  | Regex
-  | OrRegex
-  | SequenceRegex
+  = Token [Char]
+  | Letter
+  | Digit
+  | Number
+  | Metachar
+  | Char
+  | Escape
+  | EscapedChar
+  | SetChar
+  | Name
+  | QuantifierH
   deriving (Show)
 
 data ParseTree
   = Empty
-  | Node ParseNode [ParseTree]
+  | Node ParseNode Matched [ParseTree]
   deriving (Show)
 
 type Matched = [Char]
 
 type Rest = [Char]
 
-type Match = (Matched, Rest, ParseTree)
+data Match = Match Matched Rest ParseTree deriving (Show)
+
+type Matcher = Input -> Maybe Match
+
+type MatcherChain = Input -> Maybe [Match]
